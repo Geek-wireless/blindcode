@@ -20,16 +20,6 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>选择时间</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboMonth"/>
-     </item>
-     <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>选择城市</string>
@@ -38,6 +28,16 @@
      </item>
      <item>
       <widget class="QComboBox" name="comboCity"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>选择时间</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboMonth"/>
      </item>
      <item>
       <widget class="QGroupBox" name="groupBox">
