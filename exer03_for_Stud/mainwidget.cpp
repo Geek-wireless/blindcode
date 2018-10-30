@@ -21,7 +21,7 @@ mainWidget::mainWidget(QWidget *parent) :
     initComboMonth();
     initComboCity();
 
-    resetChart("南京气温");
+    resetChart("气温");
     addLineSeries(ui->chartview->chart(),"",Qt::red);
 
     worker = new dataWorker(this);
