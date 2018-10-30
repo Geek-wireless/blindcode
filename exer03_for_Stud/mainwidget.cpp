@@ -56,8 +56,9 @@ void mainWidget::initComboMonth()
 }
 void mainWidget::initComboCity()
 {
-    QStringList cities;
-    cities<<"南京"<<"北京"<<"上海"<<"杭州"<<"哈尔滨"<<"苏州";
+    this->cities<<"南京"<<"北京"<<"上海"<<"杭州"<<"哈尔滨"<<"苏州";
+                               //城市的拼音需要同时更新
+    this->citypinyin<<"nanjing"<<"beijing"<<"shanghai"<<"hangzhou"<<"haerbin"<<"suzhou";
     ui->comboCity->clear();
     ui->comboCity->addItems(cities);
 }
@@ -253,15 +254,15 @@ void mainWidget::on_btnStart_clicked()
     QString chartTitle = "";
     if(ui->comboMonth->count()>0){
         chartTitle = ui->comboMonth->currentText().replace("-","年");
-        chartTitle.append("月 南京气温");
+        chartTitle.append(QString("月 %1气温").arg(ui->comboCity->currentText()));
     }else{
-        chartTitle="南京气温";
+        chartTitle="气温";
     }
     resetChart(chartTitle);
 
     // 设置dataWorker对象的请求年月
     worker->setRequestDate(ui->comboMonth->currentText());
-
+    worker->setRequestCity(citypinyin.at(cities.indexOf(ui->comboCity->currentText())));
     // 发起HTTP请求
     worker->doRequest();
 

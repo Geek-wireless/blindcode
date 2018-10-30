@@ -50,6 +50,7 @@ private slots:
 private:
     Ui::mainWidget *ui;
     dataWorker* worker;
+    QStringList citypinyin,cities;
 
 
 };

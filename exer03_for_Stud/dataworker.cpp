@@ -43,6 +43,11 @@ void dataWorker::setRequestDate(QString newDate)
     _requestDate = newDate.replace("-","");
 }
 
+void dataWorker::setRequestCity(QString newCity)
+{
+    _requestCity = newCity;
+}
+
 
 /**
  * @brief getter函数，获得当前的年月
@@ -51,6 +56,11 @@ void dataWorker::setRequestDate(QString newDate)
 QString dataWorker::requestDate()
 {
     return _requestDate;
+}
+
+QString dataWorker::requestCity()
+{
+    return _requestCity;
 }
 
 /**
@@ -62,7 +72,7 @@ QString dataWorker::requestDate()
 void dataWorker::doRequest()
 {
     // 导入数据，首先检查是否已经存在数据文件
-    QString fName = QString("%1/%2.txt").arg(dataPath,_requestDate);
+    QString fName = QString("%1/%2_%3.txt").arg(dataPath).arg(_requestDate).arg(_requestCity);
 //    qDebug()<<fName;
     QStringList dataList;
     QFile f(fName);
@@ -89,7 +99,7 @@ void dataWorker::doRequest()
 QString dataWorker::requestUrl()
 {    
     QString r =
-            QString("https://lishi.tianqi.com/nanjing/%1.html").arg(_requestDate);
+            QString("https://lishi.tianqi.com/%1/%2.html").arg(_requestCity).arg(_requestDate);
     qDebug()<<r;
     return r;
 }
@@ -183,7 +193,7 @@ void dataWorker::exportDataToFile(const QString dataText)
     if( ! dir.exists(dataPath) )
         qDebug()<<dir.mkdir(dataPath);
 
-    QString fName = QString("%1/%2.txt").arg(dataPath,_requestDate);
+    QString fName = QString("%1/%2_%3.txt").arg(dataPath).arg(_requestDate).arg(_requestCity);
 
     QFile f(fName);
     if(f.open(QIODevice::WriteOnly|QIODevice::Text)){

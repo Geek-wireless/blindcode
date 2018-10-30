@@ -21,7 +21,9 @@ public:
     explicit dataWorker(QObject *parent = 0);
     explicit dataWorker(QString date, QObject *parent = 0);
     void setRequestDate(QString newDate);
+    void setRequestCity(QString newCity);
     QString requestDate();
+    QString requestCity();
     void doRequest();
 
 
@@ -39,6 +41,7 @@ protected slots:
 private:
     QNetworkAccessManager *manager;         //!< 网络访问管理类对象
     QString _requestDate;                   //!< 请求年月
+    QString _requestCity;
 
     QList<QDateTime> dataDate;              //!< 日期
     QList<qreal> dataHigh;                  //!< 最高温度

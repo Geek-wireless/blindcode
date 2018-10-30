@@ -18,7 +18,7 @@ SOURCES += main.cpp\
     dataworker.cpp
 
 HEADERS  += mainwidget.h \
-    dataworker.h 
+    dataworker.h  
 
 FORMS    += mainwidget.ui
 
