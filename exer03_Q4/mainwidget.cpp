@@ -21,7 +21,7 @@ mainWidget::mainWidget(QWidget *parent) :
     initComboMonth();
     initComboCity();
 
-    resetChart("气温");
+    resetChart("气温/空气质量");
     addLineSeries(ui->chartview->chart(),"",Qt::red);
 
     worker = new dataWorker(this);
@@ -285,13 +285,13 @@ void mainWidget::on_btnStart_clicked()
 /**
  * @brief dataWorker对象的dataParseFinished信号响应槽函数
  * @param date 数据点时间
- * @param tempHigh 数据点的最高温度
- * @param tempLow  数据点的最低温度
+ * @param lineOne 数据点的最高温度
+ * @param lineTwo  数据点的最低温度
  *
  * 该函数执行具体的数据更新工作，将dataWorker对象解析的数据插入序列中，并更新图表。
  * 更新完成后，使能两个按键，使用户可以发起下一次请求。
  */
-void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> tempHigh, QList<qreal> tempLow)
+void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> lineOne, QList<qreal> lineTwo)
 {
     QChart* chart = ui->chartview->chart();
     QStringList legendString;
@@ -311,8 +311,8 @@ void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> tempHigh, Q
 
     // 向每条曲线中添加数据
     for (int i=0; i<date.count();i++){
-        seriesHigh->append(date.at(i).toMSecsSinceEpoch(),tempHigh.at(i));
-        seriesLow->append(date.at(i).toMSecsSinceEpoch(),tempLow.at(i));
+        seriesHigh->append(date.at(i).toMSecsSinceEpoch(),lineOne.at(i));
+        seriesLow->append(date.at(i).toMSecsSinceEpoch(),lineTwo.at(i));
     }
 
     // 设置坐标轴

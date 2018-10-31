@@ -40,7 +40,7 @@ protected:
 private slots:
     void handleMarkerClicked();
     void on_btnStart_clicked();
-    void updateDataChart(QList<QDateTime> date, QList<qreal> tempHigh, QList<qreal> tempLow);
+    void updateDataChart(QList<QDateTime> date, QList<qreal> lineOne, QList<qreal> lineTwo);
     void on_cbShowPoint_clicked();
     void on_btnLegendAlign_clicked();
     void on_cbLegendBold_clicked();
