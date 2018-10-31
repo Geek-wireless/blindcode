@@ -90,6 +90,11 @@ void dataWorker::doRequest()
     }
 }
 
+void dataWorker::setWToShow(bool tempOrAQI)
+{
+    this->wToShow=tempOrAQI;
+}
+
 /**
  * @brief 构造实际请求链接
  * @return 数据页面地址
@@ -98,8 +103,11 @@ void dataWorker::doRequest()
  */
 QString dataWorker::requestUrl()
 {    
-    QString r =
-            QString("https://lishi.tianqi.com/%1/%2.html").arg(_requestCity).arg(_requestDate);
+    QString r;
+    if(wToShow)    //查询温度
+        r = QString("https://lishi.tianqi.com/%1/%2.html").arg(_requestCity).arg(_requestDate);
+    else                 //查询AQI
+        r = QString("http://www.tianqihoubao.com/aqi/%1-%2.html").arg(_requestCity).arg(_requestDate);
     qDebug()<<r;
     return r;
 }

@@ -45,7 +45,7 @@ void mainWidget::initComboMonth()
     QStringList month;
     QDateTime current_date_time =QDateTime::currentDateTime();
     bool ok;
-    QString currentYear =current_date_time.toString("yyyy");//).toInt(&ok, 10);
+    QString currentYear =current_date_time.toString("yyyy");
     int currentMonth =(current_date_time.toString("M")).toInt(&ok, 10);
     QStringList showYear,showMonth;
     showMonth<<"12"<<"11"<<"10"<<"09"<<"08"<<"07"<<"06"<<"05"<<"04"<<"03"<<"02"<<"01";
@@ -53,10 +53,8 @@ void mainWidget::initComboMonth()
     for(int i=currentMonth;i>1;i--)  showYear<<currentYear;
     for(int i=13-currentMonth;i>=1;i--)  showYear << QString::number(currentYear.toInt(&ok,10)-1);
     for(int i=1;i<=10;i++)  month<<QString("%1-%2").arg(showYear.at(i-1)).arg(showMonth.at(i-1));
-
     ui->comboMonth->clear();
     ui->comboMonth->addItems(month);
-
 }
 void mainWidget::initComboCity()
 {
@@ -147,8 +145,11 @@ void mainWidget::addLineSeries(QChart *chart, const QString &seriesName, const Q
         QValueAxis *mAxisY = new QValueAxis;
         mAxisY->setRange(-5,40);
         mAxisY->setLabelFormat("%g");
-        mAxisY->setTitleText("摄氏度(°C)");
-
+        if(ui->rbSearchTemp->isChecked())
+            mAxisY->setTitleText("摄氏度(°C)");
+        else
+            if (ui->rbSearchAQI->isChecked())
+                mAxisY->setTitleText("污染物指数");
         chart->setAxisX(mAxisX,series);
         chart->setAxisY(mAxisY,series);
     }else{
@@ -249,25 +250,33 @@ void mainWidget::handleMarkerClicked()
  */
 void mainWidget::on_btnStart_clicked()
 {
-    // 禁用两个按键
+    // 禁用按键
     ui->comboMonth->setEnabled(false);
     ui->comboCity->setEnabled(false);
     ui->btnStart->setEnabled(false);
-
     // 设置chart的标题
     QString chartTitle = "";
-    if(ui->comboMonth->count()>0){
+    if(ui->comboMonth->count()>0 ){
         chartTitle = ui->comboMonth->currentText().replace("-","年");
-        chartTitle.append(QString("月 %1气温").arg(ui->comboCity->currentText()));
+        if(ui->rbSearchTemp->isChecked())
+        {
+            chartTitle.append(QString("月 %1气温").arg(ui->comboCity->currentText()));
+        }
+        else
+            if(ui->rbSearchAQI->isChecked())
+            {
+                chartTitle.append(QString("月 %1空气质量").arg(ui->comboCity->currentText()));
+            }
     }else{
-        chartTitle="气温";
+        chartTitle="气温/空气质量";
     }
     resetChart(chartTitle);
 
-    // 设置dataWorker对象的请求年月
+    // 设置dataWorker对象的请求年月和请求的城市
     worker->setRequestDate(ui->comboMonth->currentText());
     worker->setRequestCity(citypinyin.at(cities.indexOf(ui->comboCity->currentText())));
     // 发起HTTP请求
+    // worker->setWToShow(true);  //0 代表 空气质量 , 1 代表温度
     worker->doRequest();
 
 }
@@ -285,14 +294,18 @@ void mainWidget::on_btnStart_clicked()
 void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> tempHigh, QList<qreal> tempLow)
 {
     QChart* chart = ui->chartview->chart();
-
+    QStringList legendString;
+    if (ui->rbSearchTemp->isChecked())
+        legendString<<"日最高温度"<<"日最低温度";
+    else
+        legendString<<"AQI"<<"PM2.5";
     // 添加第一条数据曲线
-    addLineSeries(chart,"日最高温度",Qt::red,2);
+    addLineSeries(chart,legendString.at(0),Qt::red,2);
     QLineSeries* seriesHigh = qobject_cast<QLineSeries*> (chart->series().last());
     seriesHigh->setPointsVisible(ui->cbShowPoint->isChecked());
 
     // 添加第二条数据曲线
-    addLineSeries(chart,"日最低温度",Qt::blue,2);
+    addLineSeries(chart,legendString.at(1),Qt::blue,2);
     QLineSeries* seriesLow = qobject_cast<QLineSeries*> (chart->series().last());
     seriesLow->setPointsVisible(ui->cbShowPoint->isChecked());
 
@@ -405,12 +418,12 @@ void mainWidget::on_cbLegendItalic_clicked()
 
 void mainWidget::on_rbSearchTemp_clicked()
 {
-
+    worker->setWToShow(true);  //0 代表 空气质量 , 1 代表温度
 }
 
 void mainWidget::on_rbSearchAQI_clicked()
 {
-
+    worker->setWToShow(false);  //0 代表 空气质量 , 1 代表温度
 }
 
 /**

@@ -25,6 +25,7 @@ public:
     QString requestDate();
     QString requestCity();
     void doRequest();
+    void setWToShow(bool tempOrAQI);
 
 
 protected:
@@ -49,6 +50,8 @@ private:
 
     const QString splitter;                 //!< 数据分隔符
     const QString dataPath;                 //!< 数据保存路径
+
+    bool wToShow;           //需要显示的类型,0 代表 空气质量 , 1 代表温度
 
 signals:
     /**
