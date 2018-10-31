@@ -194,13 +194,15 @@ void dataWorker::parseData(const QString sourceText)
         QStringList dataList = s.split(" ",QString::SkipEmptyParts);
         QDateTime momentInTime = QDateTime::fromString(dataList.at(0),"yyyy-MM-dd");
         dataDate.append(momentInTime);
-        dataHigh.append(dataList.at(1).toDouble());
-        dataLow.append(dataList.at(2).toDouble());
         if(!wToShow){
             dataHigh.append(dataList.at(2).toDouble());
             dataLow.append(dataList.at(4).toDouble());
-
         }
+        else
+            if (wToShow){
+                dataHigh.append(dataList.at(1).toDouble());
+                dataLow.append(dataList.at(2).toDouble());
+            }
     }
     emit dataParseFinished(dataDate,dataHigh,dataLow);
 }

@@ -2,7 +2,7 @@
 #include "ui_mainwidget.h"
 #include <dataworker.h>
 #include <QDateTime>
-
+#include <QtAlgorithms>
 
 
 /**
@@ -112,7 +112,7 @@ void mainWidget::resetChart(const QString &title)
  * @param color 序列颜色
  * @param lineWidth 序列线宽（默认值为1）
  */
-void mainWidget::addLineSeries(QChart *chart, const QString &seriesName, const QColor color, const int lineWidth)
+void mainWidget::addLineSeries(QChart* chart, const QString &seriesName, const QColor color, const int lineWidth ,const int minY,const int maxY )
 {
 
     // 新建一个序列
@@ -143,7 +143,7 @@ void mainWidget::addLineSeries(QChart *chart, const QString &seriesName, const Q
         mAxisX->setRange(QDateTime::currentDateTime().addMonths(-1),QDateTime::currentDateTime());
 
         QValueAxis *mAxisY = new QValueAxis;
-        mAxisY->setRange(-5,40);
+        mAxisY->setRange(minY,maxY);
         mAxisY->setLabelFormat("%g");
         if(ui->rbSearchTemp->isChecked())
             mAxisY->setTitleText("摄氏度(°C)");
@@ -300,7 +300,17 @@ void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> lineOne, QL
     else
         legendString<<"AQI"<<"PM2.5";
     // 添加第一条数据曲线
-    addLineSeries(chart,legendString.at(0),Qt::red,2);
+    qreal minY= scaleAQI *lineOne.at(0),maxY=scaleAQI* lineOne.at(0);
+    for(qreal item : lineOne){
+        minY=qMin(minY,item*scaleAQI);
+        maxY=qMax(maxY,item*scaleAQI);
+    }
+    for(qreal item : lineTwo){
+        minY=qMin(minY,item);
+        maxY=qMax(maxY,item);
+    }
+    if( minY>0 && minY<3) minY=-5; 
+    addLineSeries(chart,legendString.at(0),Qt::red,2,int(0.9*minY), int(maxY*1.1) );
     QLineSeries* seriesHigh = qobject_cast<QLineSeries*> (chart->series().last());
     seriesHigh->setPointsVisible(ui->cbShowPoint->isChecked());
 
@@ -311,7 +321,7 @@ void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> lineOne, QL
 
     // 向每条曲线中添加数据
     for (int i=0; i<date.count();i++){
-        seriesHigh->append(date.at(i).toMSecsSinceEpoch(),lineOne.at(i));
+        seriesHigh->append(date.at(i).toMSecsSinceEpoch(),lineOne.at(i)*scaleAQI);   
         seriesLow->append(date.at(i).toMSecsSinceEpoch(),lineTwo.at(i));
     }
 
@@ -324,7 +334,6 @@ void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> lineOne, QL
     chart->legend()->show();
     // 更新图表
     chart->update();
-
     // 使能两个按钮
     ui->comboMonth->setEnabled(true);
     ui->comboCity->setEnabled(true);
